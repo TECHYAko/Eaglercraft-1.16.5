@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html style="width:100%;height:100%;background-color:black;">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, minimum-scale=1.0, maximum-scale=1.0" />
+		<meta name="description" content="Eaglercraft 1.16.5 (u1-beta) - play in your browser" />
+		<meta name="keywords" content="eaglercraft, eaglercraftx, minecraft, 1.16.5" />
+		<title>Eaglercraft 1.16.5 (u1-beta)</title>
+		<link type="image/png" rel="shortcut icon" href="favicon.png" />
+		<style type="text/css">
+			#bootScreen { transition: opacity 0.6s ease; }
+			#bootProgressBarTrack { border-radius: 6px; overflow: hidden; }
+			#bootProgressBar { transition: width 0.4s ease-out; border-radius: 6px; }
+			#bootTipText { transition: opacity 0.4s ease; }
+		</style>
+		<script type="text/javascript" src="classes.js"></script>
+		<script type="text/javascript">
+			"use strict";
+
+			var bootScreenStartTime = Date.now();
+			var bootScreenMinDurationMs = 1500;
+
+			var bootTips = [
+				"Netherite gear is stronger than diamond and doesn't burn in lava!",
+				"You can sleep in a bed to skip the night, as long as monsters aren't nearby.",
+				"Shields can block most attacks, including arrows, if you time it right.",
+				"Saplings need light to grow into trees - don't plant them in the dark!",
+				"A crafting table lets you make almost anything, from tools to redstone contraptions.",
+				"Cats will scare away creepers if you keep them nearby.",
+				"Falling into water negates fall damage, even from great heights.",
+				"Golden apples heal you fast and are great for emergencies.",
+				"You can combine two enchanted items at an anvil to merge their enchantments.",
+				"Boats are a fast and safe way to cross oceans and rivers.",
+				"Hoes aren't just for farming - they can also be used as weak weapons in a pinch.",
+				"Lava can be turned into obsidian by pouring water on it.",
+				"Honey blocks slow your fall and stick to walls - great for safe descents.",
+				"Building a roof over your base helps keep phantoms and other flying mobs out.",
+				"You can name a mob using a name tag to make it persistent and unable to despawn.",
+				"Ender pearls can teleport you to where they land, but they cost health to use.",
+				"Villagers can be traded with to get rare items, so protect your village!",
+				"Redstone can be used to create complex machines and contraptions.",
+				"Be careful when mining - falling gravel or sand can suffocate you if you're not careful.",
+				"Exploring caves can yield valuable resources, but watch out for hostile mobs!",
+				"Frost Walker enchantment allows you to walk on water by freezing it into ice.",
+				"The first load has to download ~255MB of game assets - it's cached after that.",
+			];
+
+			function showRandomBootTip() {
+				var el = document.getElementById("bootTipText");
+				if(!el) return;
+				el.style.opacity = "0";
+				setTimeout(function() {
+					el.innerText = bootTips[Math.floor(Math.random() * bootTips.length)];
+					el.style.opacity = "1";
+				}, 400);
+			}
+
+			window.eaglerSetBootStatus = function(text, pct) {
+				var statusEl = document.getElementById("bootStatusText");
+				var barEl = document.getElementById("bootProgressBar");
+				if(statusEl && typeof text === "string") statusEl.innerText = text;
+				if(barEl && typeof pct === "number") barEl.style.width = Math.max(0, Math.min(100, pct)) + "%";
+			};
+
+			window.eaglerHideBootScreen = function() {
+				var screen = document.getElementById("bootScreen");
+				if(!screen) return;
+				var elapsed = Date.now() - bootScreenStartTime;
+				var remaining = bootScreenMinDurationMs - elapsed;
+				var doHide = function() {
+					screen.style.opacity = "0";
+					setTimeout(function() {
+						if(screen.parentNode) screen.parentNode.removeChild(screen);
+					}, 600);
+				};
+				if(remaining > 0) {
+					setTimeout(doHide, remaining);
+				} else {
+					doHide();
+				}
+			};
+
+			// eagler: assets.epk is split into <100MB chunk files (assets/assets.epk.partN) so it can be
+			// committed directly to the git repo and served same-origin by GitHub Pages - GitHub Release
+			// assets were tested and confirmed to lack CORS headers on the actual file-serving CDN, so a
+			// cross-origin fetch() from this page would fail; same-origin chunk files avoid that issue
+			// entirely. This fetches every part, concatenates them back into the exact original byte
+			// sequence, and hands the result to the engine as a Blob - not a URL string - via the same
+			// assetsURI[0].blob mechanism already used (and already proven working) for the single-file
+			// offline build, where the main-thread Blob object is transferred to the worker over
+			// postMessage so the worker can mint its own same-realm blob: URL instead of trying to fetch
+			// a blob: URL created in a different JS realm (which always fails - "Not allowed to load
+			// local resource" - see ClientPlatformSingleplayer.resolveWorkerAssetsBlob()).
+			async function loadChunkedAssets() {
+				window.eaglerSetBootStatus("Downloading assets...", 5);
+				var manifest = await (await fetch("assets/manifest.json")).json();
+				var partCount = manifest.partCount;
+				var chunks = new Array(partCount);
+				var totalBytes = manifest.totalBytes;
+				var loadedBytes = 0;
+				for(var i = 0; i < partCount; ++i) {
+					var resp = await fetch("assets/assets.epk.part" + i);
+					var buf = await resp.arrayBuffer();
+					chunks[i] = buf;
+					loadedBytes += buf.byteLength;
+					window.eaglerSetBootStatus("Downloading assets... (" + Math.round(loadedBytes / 1e6) + " / " + Math.round(totalBytes / 1e6) + " MB)",
+						5 + 45 * (loadedBytes / totalBytes));
+				}
+				var reassembledBlob = new Blob(chunks, { type: "application/octet-stream" });
+				var blobUrl = URL.createObjectURL(reassembledBlob);
+				return { url: blobUrl, blob: reassembledBlob };
+			}
+
+			window.addEventListener("load", function() {
+				if(window.location.href.indexOf("file:") === 0) {
+					alert("HTTP please, do not open this file locally - it must be served over HTTP(S).");
+					return;
+				}
+				showRandomBootTip();
+				setInterval(showRandomBootTip, 5000);
+
+				var relayId = Math.floor(Math.random() * 3);
+
+				loadChunkedAssets().then(function(assetsEntry) {
+					window.eaglercraftXOpts = {
+						demoMode: false,
+						container: "game_frame",
+						assetsURI: [ assetsEntry ],
+						localesURI: "lang/",
+						worldsDB: "worlds",
+						logInvalidCerts: true,
+						crashOnUncaughtExceptions: true,
+						relays: [
+							{ addr: "wss://relay.deev.is/", comment: "lax1dude relay #1", primary: relayId === 0 },
+							{ addr: "wss://relay.lax1dude.net/", comment: "lax1dude relay #2", primary: relayId === 1 },
+							{ addr: "wss://relay.shhnowisnottheti.me/", comment: "ayunami relay #1", primary: relayId === 2 }
+						]
+					};
+
+					var q = window.location.search;
+					if((typeof q === "string") && q[0] === "?" && (typeof window.URLSearchParams !== "undefined")) {
+						q = new window.URLSearchParams(q);
+						var s = q.get("server");
+						if(s) window.eaglercraftXOpts.joinServer = s;
+					}
+
+					window.eaglerSetBootStatus("Starting engine...", 55);
+					main();
+				}).catch(function(err) {
+					window.eaglerSetBootStatus("Failed to download assets: " + err, 0);
+					console.error(err);
+				});
+			});
+		</script>
+	</head>
+	<body style="margin:0px;width:100%;height:100%;overflow:hidden;background-color:#161616;">
+		<div id="game_frame" style="margin:0px;width:100%;height:100%;"></div>
+		<div style="margin:0px;width:100%;height:100%;font-family:sans-serif;background-color:#161616;display:flex;align-items:center;justify-content:center;user-select:none;position:absolute;left:0;top:0;z-index:1000;" id="bootScreen">
+			<div style="width:min(420px, 80vw);text-align:center;">
+				<div style="color:#eeeeee;font-size:20px;font-weight:600;letter-spacing:0.5px;margin-bottom:18px;">Eaglercraft 1.16.5 (u1-beta)</div>
+				<div id="bootProgressBarTrack" style="width:100%;height:10px;background-color:#2c2c2c;">
+					<div id="bootProgressBar" style="width:0%;height:100%;background-color:#5b9bd5;"></div>
+				</div>
+				<div id="bootStatusText" style="color:#aaaaaa;font-size:13px;margin-top:10px;">Starting up...</div>
+				<div id="bootTipText" style="color:#777777;font-size:12px;font-style:italic;margin-top:28px;min-height:32px;opacity:1;">&nbsp;</div>
+			</div>
+		</div>
+	</body>
+</html>

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta name="description" content="Eaglercraft 1.16.5 (u1-beta) - play Minecraft 1.16.5 in your browser" />
+		<title>Eaglercraft 1.16.5 (u1-beta)</title>
+		<link type="image/png" rel="shortcut icon" href="favicon.png" />
+		<style>
+			* { box-sizing: border-box; }
+			body {
+				margin: 0;
+				min-height: 100vh;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				background: #161616;
+				color: #eeeeee;
+				font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+			}
+			.card {
+				width: min(560px, 92vw);
+				text-align: center;
+				padding: 40px 32px;
+			}
+			.logo {
+				font-size: 30px;
+				font-weight: 700;
+				letter-spacing: 0.5px;
+				margin-bottom: 6px;
+			}
+			.subtitle {
+				color: #999999;
+				font-size: 14px;
+				margin-bottom: 32px;
+			}
+			.btnRow {
+				display: flex;
+				flex-direction: column;
+				gap: 14px;
+			}
+			.btn {
+				display: block;
+				padding: 16px 20px;
+				border-radius: 8px;
+				font-size: 16px;
+				font-weight: 600;
+				text-decoration: none;
+				transition: transform 0.15s ease, filter 0.15s ease;
+				border: none;
+				cursor: pointer;
+			}
+			.btn:hover { filter: brightness(1.1); transform: translateY(-1px); }
+			.btnPrimary { background: #5b9bd5; color: #0b1a26; }
+			.btnSecondary { background: #2c2c2c; color: #eeeeee; border: 1px solid #3c3c3c; }
+			.btn small { display: block; font-weight: 400; font-size: 12px; margin-top: 4px; opacity: 0.75; }
+			.btn.disabled { opacity: 0.5; cursor: not-allowed; pointer-events: none; }
+			.footNote {
+				margin-top: 28px;
+				color: #666666;
+				font-size: 12px;
+				line-height: 1.5;
+			}
+			.footNote a { color: #7fb2e0; }
+		</style>
+	</head>
+	<body>
+		<div class="card">
+			<div class="logo">Eaglercraft 1.16.5</div>
+			<div class="subtitle">(u1-beta) &mdash; Minecraft 1.16.5, ported to run entirely in your browser</div>
+			<div class="btnRow">
+				<a class="btn btnPrimary" href="play.html">
+					&#9654; Play Now
+					<small>Runs directly in this browser, no download needed (~255MB of assets on first load, cached after)</small>
+				</a>
+				<a class="btn btnSecondary disabled" id="downloadBtn" href="#">
+					&#8681; Download Offline Build
+					<small id="downloadBtnNote">Coming soon &mdash; single-file build for offline/portable use</small>
+				</a>
+			</div>
+			<div class="footNote">
+				Recommended: a recent Chromium-based browser (Chrome, Edge, Brave). First launch downloads
+				the game assets, which are then cached by your browser for faster future loads.
+			</div>
+		</div>
+	</body>
+</html>
