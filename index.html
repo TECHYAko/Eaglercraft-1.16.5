@@ -3,85 +3,313 @@
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-		<meta name="description" content="Eaglercraft 1.16.5 (u1-beta) - play Minecraft 1.16.5 in your browser" />
-		<title>Eaglercraft 1.16.5 (u1-beta)</title>
+		<meta name="description" content="Eaglercraft 1.16.5 - play Minecraft 1.16.5 in your browser" />
+		<title>Eaglercraft 1.16.5</title>
 		<link type="image/png" rel="shortcut icon" href="favicon.png" />
 		<style>
 			* { box-sizing: border-box; }
-			body {
+			html, body {
 				margin: 0;
-				min-height: 100vh;
-				display: flex;
-				align-items: center;
-				justify-content: center;
-				background: #161616;
-				color: #eeeeee;
+				min-height: 100%;
 				font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+				color: #eeeeee;
 			}
-			.card {
-				width: min(560px, 92vw);
-				text-align: center;
-				padding: 40px 32px;
-			}
-			.logo {
-				font-size: 30px;
-				font-weight: 700;
-				letter-spacing: 0.5px;
-				margin-bottom: 6px;
-			}
-			.subtitle {
-				color: #999999;
-				font-size: 14px;
-				margin-bottom: 32px;
-			}
-			.btnRow {
+			body {
+				position: relative;
 				display: flex;
 				flex-direction: column;
+				align-items: center;
+				overflow-x: hidden;
+				background: #100c0c;
+			}
+
+			/* ---- hero background ---- */
+			.bg {
+				position: fixed;
+				inset: 0;
+				z-index: -2;
+				background-image: url("hero_bg.png");
+				background-size: cover;
+				background-position: center 92%;
+				filter: blur(5px) brightness(0.32) saturate(1.15);
+				transform: scale(1.08);
+			}
+			.bgShade {
+				position: fixed;
+				inset: 0;
+				z-index: -1;
+				background:
+					linear-gradient(180deg, rgba(8,6,6,0.88) 0%, rgba(9,7,7,0.6) 22%, rgba(10,8,8,0.72) 55%, rgba(8,6,6,0.92) 100%);
+			}
+
+			/* ---- layout ---- */
+			main {
+				width: min(760px, 92vw);
+				padding: 64px 0 32px;
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+			}
+
+			.title {
+				font-size: clamp(34px, 6vw, 52px);
+				font-weight: 800;
+				letter-spacing: 1px;
+				text-align: center;
+				margin: 0;
+				color: #ffffff;
+				text-shadow:
+					3px 3px 0 #2b3a1f,
+					0 0 26px rgba(126, 199, 84, 0.35);
+				opacity: 0;
+				animation: riseIn 0.6s ease-out 0.05s forwards;
+			}
+			.subtitle {
+				margin: 12px 0 36px;
+				color: #cfcfcf;
+				font-size: 15px;
+				text-align: center;
+				max-width: 480px;
+				opacity: 0;
+				animation: riseIn 0.6s ease-out 0.2s forwards;
+			}
+
+			/* ---- version picker ---- */
+			.versionPicker {
+				display: flex;
+				gap: 6px;
+				background: rgba(0,0,0,0.35);
+				border: 1px solid rgba(255,255,255,0.12);
+				border-radius: 999px;
+				padding: 5px;
+				margin-bottom: 28px;
+				opacity: 0;
+				animation: riseIn 0.6s ease-out 0.32s forwards;
+			}
+			.versionPicker button {
+				appearance: none;
+				border: none;
+				background: transparent;
+				color: #c9c9c9;
+				font-size: 14px;
+				font-weight: 600;
+				padding: 10px 22px;
+				border-radius: 999px;
+				cursor: pointer;
+				transition: background 0.2s ease, color 0.2s ease, transform 0.15s ease;
+			}
+			.versionPicker button:hover { transform: translateY(-1px); }
+			.versionPicker button.active {
+				background: linear-gradient(180deg, #6fbf3f, #4c9426);
+				color: #10230a;
+				box-shadow: 0 2px 10px rgba(79, 154, 39, 0.45);
+			}
+			.versionPicker button .tag {
+				font-size: 10px;
+				font-weight: 700;
+				opacity: 0.8;
+				margin-left: 6px;
+			}
+
+			/* ---- version panel ---- */
+			.panel {
+				width: 100%;
+				display: none;
+				flex-direction: column;
+				align-items: center;
+				animation: fadeIn 0.35s ease-out;
+			}
+			.panel.show { display: flex; }
+
+			@keyframes fadeIn { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: translateY(0); } }
+			@keyframes riseIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+			.btnRow {
+				display: flex;
+				flex-wrap: wrap;
+				justify-content: center;
 				gap: 14px;
+				width: 100%;
+				margin-bottom: 34px;
 			}
 			.btn {
 				display: block;
-				padding: 16px 20px;
-				border-radius: 8px;
+				min-width: 220px;
+				padding: 16px 22px;
+				border-radius: 10px;
 				font-size: 16px;
-				font-weight: 600;
+				font-weight: 700;
 				text-decoration: none;
-				transition: transform 0.15s ease, filter 0.15s ease;
+				text-align: center;
+				transition: transform 0.15s ease, filter 0.15s ease, box-shadow 0.15s ease;
 				border: none;
 				cursor: pointer;
 			}
-			.btn:hover { filter: brightness(1.1); transform: translateY(-1px); }
-			.btnPrimary { background: #5b9bd5; color: #0b1a26; }
-			.btnSecondary { background: #2c2c2c; color: #eeeeee; border: 1px solid #3c3c3c; }
-			.btn small { display: block; font-weight: 400; font-size: 12px; margin-top: 4px; opacity: 0.75; }
-			.btn.disabled { opacity: 0.5; cursor: not-allowed; pointer-events: none; }
-			.footNote {
-				margin-top: 28px;
-				color: #666666;
-				font-size: 12px;
-				line-height: 1.5;
+			.btn:hover { filter: brightness(1.12); transform: translateY(-2px); }
+			.btnPrimary {
+				background: linear-gradient(180deg, #6fbf3f, #4c9426);
+				color: #10230a;
+				box-shadow: 0 4px 14px rgba(79, 154, 39, 0.35);
 			}
-			.footNote a { color: #7fb2e0; }
+			.btnSecondary {
+				background: rgba(255,255,255,0.06);
+				color: #eeeeee;
+				border: 1px solid rgba(255,255,255,0.18);
+			}
+			.btn small { display: block; font-weight: 400; font-size: 11.5px; margin-top: 4px; opacity: 0.8; }
+
+			/* ---- highlights ---- */
+			.highlights {
+				width: 100%;
+				background: rgba(0,0,0,0.32);
+				border: 1px solid rgba(255,255,255,0.1);
+				border-radius: 14px;
+				padding: 22px 26px;
+				margin-bottom: 8px;
+			}
+			.highlights h2 {
+				font-size: 13px;
+				text-transform: uppercase;
+				letter-spacing: 1.2px;
+				color: #9fe07a;
+				margin: 0 0 14px;
+				font-weight: 700;
+			}
+			.highlights ul {
+				list-style: none;
+				margin: 0;
+				padding: 0;
+				display: grid;
+				grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+				gap: 12px 20px;
+			}
+			.highlights li {
+				font-size: 13.5px;
+				color: #dedede;
+				line-height: 1.5;
+				padding-left: 22px;
+				position: relative;
+			}
+			.highlights li::before {
+				content: "";
+				position: absolute;
+				left: 0;
+				top: 5px;
+				width: 10px;
+				height: 10px;
+				background: #6fbf3f;
+				border-radius: 2px;
+			}
+			.highlights li b { color: #ffffff; }
+
+			/* ---- discord ---- */
+			.discordBtn {
+				margin-top: 30px;
+				display: inline-flex;
+				align-items: center;
+				gap: 9px;
+				padding: 11px 20px;
+				border-radius: 999px;
+				background: rgba(88, 101, 242, 0.18);
+				border: 1px solid rgba(88, 101, 242, 0.5);
+				color: #b7bcff;
+				text-decoration: none;
+				font-size: 13.5px;
+				font-weight: 600;
+				transition: background 0.2s ease, transform 0.15s ease;
+			}
+			.discordBtn:hover { background: rgba(88, 101, 242, 0.32); transform: translateY(-1px); }
+
+			footer {
+				margin-top: auto;
+				padding: 26px 16px 22px;
+				text-align: center;
+				color: #7a7a7a;
+				font-size: 12px;
+				line-height: 1.7;
+			}
+			footer .ported { color: #a0a0a0; font-weight: 600; }
 		</style>
 	</head>
 	<body>
-		<div class="card">
-			<div class="logo">Eaglercraft 1.16.5</div>
-			<div class="subtitle">(u1-beta) &mdash; Minecraft 1.16.5, ported to run entirely in your browser</div>
-			<div class="btnRow">
-				<a class="btn btnPrimary" href="play.html">
-					&#9654; Play Now
-					<small>Runs directly in this browser, no download needed (~255MB of assets on first load, cached after)</small>
-				</a>
-				<a class="btn btnSecondary" id="downloadBtn" href="download.html">
-					&#8681; Download Offline Build
-					<small id="downloadBtnNote">~381MB single-file build for offline/portable use &mdash; prepares client-side, then downloads</small>
-				</a>
+		<div class="bg"></div>
+		<div class="bgShade"></div>
+
+		<main>
+			<h1 class="title">Eaglercraft 1.16.5</h1>
+			<p class="subtitle">Minecraft 1.16.5, ported to run entirely in your browser &mdash; no installs, no plugins.</p>
+
+			<div class="versionPicker" role="tablist">
+				<button type="button" class="active" data-target="u2" id="tabU2">u2-beta <span class="tag">LATEST</span></button>
+				<button type="button" data-target="u1" id="tabU1">u1-beta <span class="tag">LEGACY</span></button>
 			</div>
-			<div class="footNote">
-				Recommended: a recent Chromium-based browser (Chrome, Edge, Brave). First launch downloads
-				the game assets, which are then cached by your browser for faster future loads.
+
+			<div class="panel show" id="panelU2">
+				<div class="btnRow">
+					<a class="btn btnPrimary" href="u2/game.html">
+						&#9654; Play Now
+						<small>Loads directly in this tab &mdash; WASM-GC build, ~53MB</small>
+					</a>
+					<a class="btn btnSecondary" href="u2/game.html" download="Eaglercraft 1.16.5 (u2-beta).html">
+						&#8681; Download Offline Build
+						<small>Single file, play offline anytime &mdash; no internet required after download</small>
+					</a>
+				</div>
+				<div class="highlights">
+					<h2>What's new in u2-beta</h2>
+					<ul>
+						<li><b>Major FPS improvements</b> &mdash; smoother gameplay, especially on lower-end hardware</li>
+						<li><b>New WASM-GC engine</b> &mdash; smaller download, faster boot times</li>
+						<li><b>Real multiplayer</b> &mdash; connect to real Minecraft servers</li>
+						<li><b>Shared Worlds</b> &mdash; invite friends into your singleplayer world over the internet, no dedicated server needed</li>
+						<li><b>Custom skins &amp; capes</b> &mdash; now show correctly for everyone in Shared Worlds</li>
+						<li><b>Chat fixes</b> &mdash; in-game chat and join/leave messages now work reliably</li>
+					</ul>
+				</div>
 			</div>
-		</div>
+
+			<div class="panel" id="panelU1">
+				<div class="btnRow">
+					<a class="btn btnPrimary" href="play.html">
+						&#9654; Play Now
+						<small>Runs directly in this browser (~255MB of assets on first load, cached after)</small>
+					</a>
+					<a class="btn btnSecondary" href="download.html">
+						&#8681; Download Offline Build
+						<small>~381MB single-file build for offline/portable use</small>
+					</a>
+				</div>
+				<div class="highlights">
+					<h2>About u1-beta</h2>
+					<ul>
+						<li>The original browser release of this port. Kept available for compatibility and testing.</li>
+						<li>Uses the older classic engine build (not WASM-GC) &mdash; larger download, slower boot than u2-beta.</li>
+					</ul>
+				</div>
+			</div>
+
+			<a class="discordBtn" href="https://discord.gg/69GcWHXUmU" target="_blank" rel="noopener">
+				&#128172; Join the Discord
+			</a>
+		</main>
+
+		<footer>
+			<span class="ported">Ported by AcornDev</span><br />
+			&copy; 2026 &mdash; Not affiliated with Mojang AB or Microsoft. Minecraft is a trademark of Mojang Synergies AB.
+		</footer>
+
+		<script>
+			"use strict";
+			var tabs = { u2: document.getElementById("tabU2"), u1: document.getElementById("tabU1") };
+			var panels = { u2: document.getElementById("panelU2"), u1: document.getElementById("panelU1") };
+			function selectVersion(key) {
+				for (var k in tabs) {
+					tabs[k].classList.toggle("active", k === key);
+					panels[k].classList.toggle("show", k === key);
+				}
+			}
+			tabs.u2.addEventListener("click", function () { selectVersion("u2"); });
+			tabs.u1.addEventListener("click", function () { selectVersion("u1"); });
+		</script>
 	</body>
 </html>
