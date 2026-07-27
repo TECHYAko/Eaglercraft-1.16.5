@@ -9,7 +9,8 @@ Minecraft 1.16.5, ported to run **entirely in your browser**. No installs, no la
 </p>
 
 <p align="center">
-  <img src=".github/images/title_screen.png" width="700" alt="Eaglercraft 1.16.5 title screen">
+  <img src=".github/images/title_screen.png" width="49%" alt="Eaglercraft 1.16.5 title screen">
+  <img src=".github/images/gameplay_shot.png" width="49%" alt="Eaglercraft 1.16.5 gameplay">
 </p>
 
 ## What is this?
