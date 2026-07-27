@@ -34,12 +34,6 @@ A full source port of Minecraft 1.16.5 (client + integrated server) onto the Eag
 
 Two builds are available from the launcher: **u2-beta** (latest, WASM-GC) and **u1-beta** (legacy).
 
-## Built with
-
-- [TeaVM](https://teavm.org/) — compiles the Java client to WebAssembly
-- EaglercraftX 1.8 — the browser runtime this is built on top of
-- MCP-decompiled Minecraft 1.16.5 source as the porting base
-
 ## Community
 
 Bugs, updates, and behind-the-scenes stuff happen on Discord:
