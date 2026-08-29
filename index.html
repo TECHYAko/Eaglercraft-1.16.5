@@ -40,12 +40,6 @@ a.row.main{border-color:var(--line-hi)}
 .t{font-size:14px;font-weight:500}
 .d{color:var(--dim);font-size:12px;margin-top:3px}
 .meta{color:var(--faint);font-size:12px;white-space:nowrap}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:8px;margin-top:6px}
-.cell{background:var(--panel);border:1px solid var(--line);border-radius:6px;padding:11px 13px}
-.cell b{display:block;font-size:12px;font-weight:600}
-.cell span{color:var(--dim);font-size:11px}
-ul{margin:0;padding-left:18px;color:var(--dim);font-size:13px}
-li{margin:5px 0}
 footer{margin-top:34px;color:var(--faint);font-size:12px;display:flex;gap:14px;flex-wrap:wrap}
 footer a{color:var(--dim);text-decoration:none;border-bottom:1px solid var(--line)}
 footer a:hover{color:var(--fg)}
@@ -79,29 +73,6 @@ footer a:hover{color:var(--fg)}
 
   <hr />
 
-  <p class="sec">What's new in u3</p>
-  <ul>
-    <li>Fixed hostile mobs not spawning</li>
-    <li>Fixed server crash when crossbow mobs attack</li>
-    <li>Fixed TPS freezing during play</li>
-    <li>Rendering performance work — smoother frames, fewer stalls</li>
-    <li>Correct hurt flash, creeper charge-up, and smoke particles</li>
-    <li>Enchanting table text and layout fixed</li>
-    <li>Screen recording, plus restored vanilla-quality sounds</li>
-  </ul>
-
-  <hr />
-
-  <p class="sec">Requirements</p>
-  <div class="grid">
-    <div class="cell"><b>WebAssembly GC</b><span>Chrome / Edge 119+</span></div>
-    <div class="cell"><b>WebGL 2.0</b><span>Hardware accel on</span></div>
-    <div class="cell"><b>~1 GB RAM</b><span>Free in-browser</span></div>
-    <div class="cell"><b>Desktop</b><span>Mobile unsupported</span></div>
-  </div>
-
-  <hr />
-
   <p class="sec">Previous</p>
   <a class="row" href="u2/game.html">
     <span>
@@ -112,7 +83,6 @@ footer a:hover{color:var(--fg)}
   </a>
 
   <footer>
-    <a href="https://github.com/TECHYAko/1.16-SRC">Source</a>
     <span>Built by AcornDev</span>
     <span>Not affiliated with Mojang or Microsoft</span>
   </footer>
