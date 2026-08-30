@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="description" content="A port of the Minecraft 1.16.5 Java client to the browser, compiled to WebAssembly via TeaVM. Engine, renderer and runtime notes." />
+<title>Eaglercraft 1.16.5 — AcornDev</title>
+<link type="image/png" rel="shortcut icon" href="favicon.png" />
+<style>
+*{box-sizing:border-box}
+:root{
+  --bg:#0b0c0e; --panel:#111316; --line:#1e2126; --line-hi:#2c3138;
+  --fg:#e6e8ea; --dim:#8b9199; --faint:#5b616a; --accent:#4ade80;
+}
+@media (prefers-color-scheme:light){
+  :root{ --bg:#fafaf9; --panel:#fff; --line:#e5e5e2; --line-hi:#d0d0cc;
+         --fg:#16181a; --dim:#61666d; --faint:#9aa0a6; --accent:#16a34a; }
+}
+html,body{margin:0;min-height:100%}
+body{
+  background:var(--bg); color:var(--fg);
+  font:14px/1.65 ui-monospace,SFMono-Regular,Menlo,Consolas,"Liberation Mono",monospace;
+  display:flex; justify-content:center; padding:48px 20px 72px;
+}
+main{width:100%;max-width:660px}
+.head{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap}
+h1{font-size:19px;font-weight:600;margin:0;letter-spacing:-.01em}
+.ver{color:var(--accent);font-size:12px}
+.sub{color:var(--dim);margin:10px 0 0;font-size:13px}
+hr{border:0;border-top:1px solid var(--line);margin:26px 0}
+.sec{color:var(--faint);font-size:11px;text-transform:uppercase;letter-spacing:.09em;margin:0 0 12px}
+p{margin:0 0 12px}
+.body{color:var(--dim);font-size:13px}
+.body code{color:var(--fg);background:var(--panel);border:1px solid var(--line);border-radius:3px;padding:1px 5px;font-size:12px}
+a.row{
+  display:flex;align-items:center;justify-content:space-between;gap:16px;
+  padding:14px 16px;margin-bottom:8px;text-decoration:none;color:inherit;
+  background:var(--panel);border:1px solid var(--line);border-radius:6px;
+  transition:border-color .13s,transform .13s;
+}
+a.row:hover{border-color:var(--line-hi);transform:translateY(-1px)}
+a.row.main{border-color:var(--line-hi)}
+.t{font-size:14px;font-weight:500}
+.d{color:var(--dim);font-size:12px;margin-top:3px}
+.meta{color:var(--faint);font-size:12px;white-space:nowrap}
+dl{margin:0}
+dt{color:var(--fg);font-size:13px;margin:0 0 3px}
+dd{color:var(--dim);font-size:13px;margin:0 0 14px}
+footer{margin-top:34px;color:var(--faint);font-size:12px;display:flex;gap:14px;flex-wrap:wrap}
+footer a{color:var(--dim);text-decoration:none;border-bottom:1px solid var(--line)}
+footer a:hover{color:var(--fg)}
+</style>
+</head>
+<body>
+<main>
+  <div class="head">
+    <h1>Eaglercraft 1.16.5</h1>
+    <span class="ver">u3</span>
+  </div>
+  <p class="sub">A port of the Minecraft 1.16.5 Java client to the browser, compiled to WebAssembly.</p>
+
+  <hr />
+
+  <p class="sec">What this is</p>
+  <div class="body">
+    <p>The decompiled 1.16.5 client, rebuilt to run on the EaglercraftX platform layer and compiled
+    to WASM-GC with <code>TeaVM</code>. The JVM APIs the game expects — threads, NIO, AWT, LWJGL —
+    don't exist in a browser, so each one is re-implemented against WebGL, Web Audio, WebSockets and
+    IndexedDB behind a platform abstraction.</p>
+    <p>It runs fully client-side. No install, no plugins, no server round-trip for singleplayer.</p>
+  </div>
+
+  <hr />
+
+  <p class="sec">Engineering notes</p>
+  <dl>
+    <dt>Single-threaded runtime</dt>
+    <dd>TeaVM has no real threads, so <code>createNamedService()</code> returns a direct executor —
+    chunk generation, lighting and mesh building all run on one thread and must cooperatively yield
+    or the tab freezes.</dd>
+
+    <dt>Integrated server in a Web Worker</dt>
+    <dd>Singleplayer runs a real server in a worker, talking to the client over <code>postMessage</code>
+    IPC instead of a socket.</dd>
+
+    <dt>Fixed-function GL emulation</dt>
+    <dd>1.16's renderer targets modern GL. The platform layer emulates it over WebGL with a shader
+    permutation cache keyed on pipeline state bits.</dd>
+
+    <dt>Allocation pressure</dt>
+    <dd>WASM-GC has no generational nursery, so per-frame garbage that a JVM would absorb becomes
+    visible stutter. Much of the optimization work is removing allocations from the chunk meshing
+    and visibility paths.</dd>
+  </dl>
+
+  <hr />
+
+  <p class="sec">Links</p>
+  <a class="row main" href="play/">
+    <span>
+      <span class="t">Launcher</span>
+      <span class="d">Run the current and previous builds</span>
+    </span>
+    <span class="meta">&rarr;</span>
+  </a>
+  <a class="row" href="https://github.com/TECHYAko/1.16-SRC">
+    <span>
+      <span class="t">Source</span>
+      <span class="d">github.com/TECHYAko/1.16-SRC</span>
+    </span>
+    <span class="meta">&nearr;</span>
+  </a>
+
+  <footer>
+    <span>Built by AcornDev</span>
+    <span>Not affiliated with Mojang or Microsoft</span>
+  </footer>
+</main>
+</body>
+</html>
