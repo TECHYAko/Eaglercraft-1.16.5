@@ -40,12 +40,6 @@ offline — worlds are saved in your browser's local storage.
 - **~1 GB** of free memory available to the browser
 - Desktop only — mobile is not supported
 
-## Source
-
-Client source: [TECHYAko/1.16-SRC](https://github.com/TECHYAko/1.16-SRC)
-
-Built on the [EaglercraftX](https://github.com/lax1dude/eaglercraftx-1.8) runtime by lax1dude.
-
 ---
 
 Not affiliated with Mojang Studios or Microsoft. Minecraft is a trademark of Mojang Studios.
